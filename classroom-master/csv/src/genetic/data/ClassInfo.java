@@ -19,6 +19,7 @@ public class ClassInfo
 	private String max_num;
 	private String class_room;
 	private String taking_num;
+	private ClassRoom classRoom;
 
 	public ClassInfo(String year, String semester, String class_code, String class_section, String credit, String max_num, String class_room, String taking_num, String class_time)
 	{
@@ -43,8 +44,10 @@ public class ClassInfo
 	public String getClassSection() { return this.class_section; }
 	public String getCredit() { return this.credit; }
 	public String getMaxNum() { return this.max_num; }
-	public String getClassRoom() { return this.class_room; }
+	public String getClassRoomName() { return this.class_room; }
 	public String getTakingNum() { return this.taking_num; }
+	public ClassRoom getClassRoom() { return this.classRoom; }
+	public void setClassRoom(ClassRoom classRoom) { this.classRoom = classRoom; }
 
 	public int[] parseTime(String time)
 	{	
@@ -73,6 +76,7 @@ public class ClassInfo
 		return new ClassKey(year, semester, class_code, class_section);
 	}
 
+	@Override
 	public String toString()
 	{
 		String tmp = "";
@@ -97,6 +101,14 @@ public class ClassInfo
 			tmp += student.getId() + ", ";
 		tmp += "}";
 		return tmp;
+	}
+
+	public String toString_classroom()
+	{
+		if(this.classRoom == null)
+			return this.getKey() + " : {}";
+
+		return this.getKey() + " : " + this.classRoom.toString();
 	}
 
 	public void setNextClass(ClassInfo classInfo)
@@ -128,9 +140,9 @@ public class ClassInfo
 				for(Student s : getStudent())
 					if(s.getId().equals(student.getId()))
 						count++;
-			if(count > 0)
-				System.out.println(this+ "=>" + _class);
-			distance += (count * table.getDistance(this.class_room, _class.getClassRoom()));
+	//		if(count > 0)
+	//			System.out.println(this+ "=>" + _class);
+			distance += (count * table.getDistance(this.class_room, _class.getClassRoomName()));
 		}
 		return distance;
 	}
@@ -143,5 +155,11 @@ public class ClassInfo
 	public ArrayList<Student> getStudent()
 	{	
 		return this.taking_students;
+	}
+
+	public void makeEmpty()
+	{
+		this.classRoom.makeEmpty(this.getKey());
+		this.classRoom = null;
 	}
 }

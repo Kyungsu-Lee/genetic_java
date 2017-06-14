@@ -7,6 +7,7 @@ public class TableFactory
 		"ENROLLMENT"
 	,	"CLASS"
 	,	"DISTANCE"
+	,	"CLASSROOM"
 	};
 
 	public static Table make(String token)
@@ -20,6 +21,9 @@ public class TableFactory
 		if(token.equals(TOKENS[2]))
 			return new DistanceTable();
 	
+		if(token.equals(TOKENS[3]))
+			return new ClassRoomTable();
+
 		return null;
 	}
 }

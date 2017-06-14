@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.ArrayList;
 
 public class CSVElement
 {
@@ -12,6 +13,16 @@ public class CSVElement
 	public CSVElement(String[] attribute, String[] value)
 	{
 		insert(attribute, value);
+	}
+
+	public Object[] getAttributes()
+	{
+		ArrayList<String> tmp = new ArrayList<>();
+
+		for(String key : info.keySet())
+			tmp.add(key);
+	
+		return tmp.toArray();
 	}
 
 	public String getElement(String attribute)
@@ -28,7 +39,7 @@ public class CSVElement
 	{
 		this.info.put(attribute, value);
 	}
-	
+
 	public void insert(String[] attribute, String[] value)
 	{
 		if(attribute.length != value.length)

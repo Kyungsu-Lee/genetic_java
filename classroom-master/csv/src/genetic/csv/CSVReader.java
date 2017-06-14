@@ -6,7 +6,6 @@ import genetic.data.TimeTable;
 public class CSVReader
 {
 	private final String TOKEN = "::-::";
-
 	private StringBuilder content;
 
 	public CSVReader()

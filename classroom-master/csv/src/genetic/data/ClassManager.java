@@ -1,6 +1,7 @@
 package genetic.data;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 import genetic.csv.DistanceTable;
 
 public class ClassManager
@@ -32,11 +33,30 @@ public class ClassManager
 		return map.get(key);
 	}
 
+	public ArrayList<ClassInfo> getAllClasses()
+	{
+		ArrayList<ClassInfo> tmp = new ArrayList<ClassInfo>();
+
+		for(ClassKey key : map.keySet())
+			tmp.add(map.get(key));
+		
+		return tmp;
+	}
+
 	public void addStudent(ClassKey key, Student student)
 	{
 		if(!map.containsKey(key))
 			return;
 		get(key).addStudent(student);
+	}
+
+	public ArrayList<ClassKey> getClassKeys()
+	{
+		ArrayList<ClassKey> tmp = new ArrayList<>();
+		for(ClassKey key : map.keySet())
+			tmp.add(key);
+		
+		return tmp;
 	}
 
 	public void setNextClass()

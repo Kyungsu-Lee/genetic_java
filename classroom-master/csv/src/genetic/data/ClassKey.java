@@ -28,6 +28,19 @@ public class ClassKey
 	}
 
 	@Override
+	public String toString()
+	{
+		String tmp = "";
+		tmp += "{";
+		tmp += "year : " + year;
+		tmp += ", semester : " + semester;
+		tmp += ", class_code : " + class_code;
+		tmp += ", class_section : " + class_section;
+		tmp += "}";
+		return tmp;
+	}
+
+	@Override
 	public boolean equals(Object o)
 	{
 		if(!(o instanceof ClassKey))

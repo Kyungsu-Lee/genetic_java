@@ -5,7 +5,7 @@
 <property name="src" value="src"/>
 <property name="bin" value="bin"/>
 <property name="lib" value="lib"/>
-
+<property name="doc" value="doc"/>
 
 <target name="init">
 	<delete dir="${bin}"/>
@@ -38,5 +38,16 @@
 	</java>
 </target>
 
+<target name="doc" depends="build" description="generate documentation">
+	<mkdir dir="${doc}"/>
+	<javadoc destdir="${doc}" packagenames="*.*" author="false" private="true" version="true" windowtitle="Simple Documentation">
+			<packageset dir="${src}" />
+	</javadoc>
+  </target>
+
+<target name="clean">
+	<delete dir="${bin}"/>
+	<delete dir="${doc}"/>
+</target>
 
 </project>
