@@ -38,6 +38,22 @@ public class ClassRoom
 	{
 		classes.remove(classKey);
 	}
+	
+	public boolean hasTime(int[] time)
+	{
+		boolean flag = false;
+
+		for(ClassKey key : classes)
+			for(int i=0; i<time.length; i++)
+			{
+				if(time[i] == -1) return false;
+				for(int j=0; j< ClassManager.getInstance().get(key).getTime().length; j++)
+					flag |= (time[i] == ClassManager.getInstance().get(key).getTime()[j]);
+			}
+
+		return flag;
+			
+	}
 
 	@Override
 	public int hashCode()	{ return this.name.hashCode(); }

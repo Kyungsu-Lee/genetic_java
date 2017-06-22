@@ -5,10 +5,11 @@ import java.util.*;
 
 public class ClassInfo
 {
-	ArrayList<Student> taking_students = new ArrayList<Student>();
-	ArrayList<ClassInfo> next_class = new ArrayList<>();
+	private ArrayList<Student> taking_students = new ArrayList<Student>();
+	private ArrayList<ClassInfo> next_class = new ArrayList<>();
+	private ArrayList<ClassInfo> previous_class = new ArrayList<>();
 	
-	Table table;
+	private DistanceTable table;
 
 	private int[] class_time;
 	private String year;
@@ -33,7 +34,7 @@ public class ClassInfo
 		this.class_time = parseTime(class_time);
 	}
 	
-	public void setTable(Table table)
+	public void setTable(DistanceTable table)
 	{
 		this.table = table;
 	}
@@ -47,7 +48,11 @@ public class ClassInfo
 	public String getClassRoomName() { return this.class_room; }
 	public String getTakingNum() { return this.taking_num; }
 	public ClassRoom getClassRoom() { return this.classRoom; }
-	public void setClassRoom(ClassRoom classRoom) { this.classRoom = classRoom; }
+	public void setClassRoom(ClassRoom classRoom) 
+	{
+		this.class_room = classRoom.getName(); 
+		this.classRoom = classRoom; 
+	}
 
 	public int[] parseTime(String time)
 	{	
@@ -108,9 +113,19 @@ public class ClassInfo
 		if(this.classRoom == null)
 			return this.getKey() + " : {}";
 
-		return this.getKey() + " : " + this.classRoom.toString();
+		return this.getKey() + "=>" + this.class_room;
 	}
 
+	public void clearNextClass()
+	{
+		next_class.clear();
+	}
+
+	public void clearPreviousClass()
+	{
+		previous_class.clear();
+	}
+		
 	public void setNextClass(ClassInfo classInfo)
 	{
 		boolean flag = false;
@@ -121,7 +136,15 @@ public class ClassInfo
 		}
 
 		if(flag)
+		{
 			this.next_class.add(classInfo);
+			classInfo.setPreviousClass(this);
+		}
+	}
+
+	public void setPreviousClass(ClassInfo classInfo)
+	{
+		this.previous_class.add(classInfo);
 	}
 
 	public ArrayList<ClassInfo> getNextClass()
@@ -130,6 +153,24 @@ public class ClassInfo
 	}
 
 	public int getNextDistance(DistanceTable table)
+	{
+		int distance = 0;
+
+		for(ClassInfo _class : previous_class)
+		{
+			int count = 0;
+			for(Student student : _class.getStudent())
+				for(Student s : getStudent())
+					if(s.getId().equals(student.getId()))
+						count++;
+
+			distance += (count * table.getDistance(this.class_room, _class.getClassRoomName()));
+		}
+
+		return distance;
+	}
+
+	public int getPreviousDistance(DistanceTable table)
 	{
 		int distance = 0;
 
@@ -159,7 +200,18 @@ public class ClassInfo
 
 	public void makeEmpty()
 	{
-		this.classRoom.makeEmpty(this.getKey());
+		if(this.classRoom != null)
+			this.classRoom.makeEmpty(this.getKey());
 		this.classRoom = null;
+	}
+
+	public int getMovement(DistanceTable table)
+	{
+		return Math.abs(this.getNextDistance(table) - this.getPreviousDistance(table));
+	}
+
+	public int getMovement()
+	{
+		return Math.abs(this.getNextDistance(this.table) - this.getPreviousDistance(this.table));
 	}
 }

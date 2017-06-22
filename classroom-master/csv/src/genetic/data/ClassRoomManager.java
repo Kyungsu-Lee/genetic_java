@@ -31,6 +31,11 @@ public class ClassRoomManager
 		this.map.put(classRoomName, new ClassRoom(classRoomName, capacity));
 	}
 
+	public void clear()
+	{
+		map.clear();
+	}
+
 	public void enroll(ClassKey classKey, String classRoomName)
 	{
 		if(map.get(classRoomName) != null)

@@ -2,39 +2,118 @@ package genetic;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Comparator;
+
 import genetic.csv.*;
 import genetic.data.*;
 import genetic.mutation.*;
 
 public class Main
 {
+	static DistanceTable distanceTable;
+
 	public static void main(String[] args)
 	{
+
 		ClassSystem system = new ClassSystem(args[0]);
-		system.selectSemester(2016, 1);
+		system.selectSemester(2013, 1);
 
-		RandomArrayAdaptor<ClassInfo> adaptor = new RandomArrayAdaptor<>();
-		adaptor.set(ClassManager.getInstance().getAllClasses());
-		
-		for(ClassInfo c : adaptor.get(10))
-		{
-			System.out.println(c.toString_classroom());
-		}
+		distanceTable = (DistanceTable)(new CSVReader(args[0], "distance.csv").makeTable("DISTANCE"));
+		ClassManager.getInstance().setNextClass();
+
+		ClassManager cM = ClassManager.getInstance();
+		for(ClassInfo _class : cM.getAllClasses())
+			_class.setTable(distanceTable);
+
+	
+		System.out.println(cM.getNextTotalDistance());
+
+		GreedyAdaptor gA = new GreedyAdaptor();
+		gA.set(cM.getAllClasses());
+		gA.get(100);
+
+		ClassManager.getInstance().setNextClass();
+
+		int next = (ClassManager.getInstance().getNextTotalDistance());
+		System.out.println(next);
+
+		gA = new GreedyAdaptor();
+		gA.set(cM.getAllClasses());
+		gA.get(50);
+
+		ClassManager.getInstance().setNextClass();
+
+		next = (ClassManager.getInstance().getNextTotalDistance());
+		System.out.println(next);
 /*
-		(ClassManager.getInstance().getAllClasses()).get(10).makeEmpty();
-		for(ClassInfo c : ClassManager.getInstance().getAllClasses())
+		ClassSystem system = new ClassSystem(args[0]);
+		system.selectSemester(2013, 1);
+
+		RandomArrayAdaptor adaptor = new RandomArrayAdaptor();
+		adaptor.set(ClassManager.getInstance().getAllClasses());
+
+		ArrayList<ClassInfo> newArray = adaptor.get(50);	
+		for(ClassInfo c : newArray)
 		{
-			System.out.println(c.toString_classroom());
+			c.makeEmpty();
 		}
+
+		MutateClassAdaptor ad = new MutateClassAdaptor();
+		ad.set(newArray);
+		ad.get();
+		System.out.println(ClassManager.getInstance().ClassPair());
+
+		   ClassManager.getInstance().setNextClass();
+
+		   int next = (ClassManager.getInstance().getNextTotalDistance());
+		   System.out.println(next);
 */
-		
-//		ClassManager.getInstance().setNextClass();
-//		System.out.println(ClassManager.getInstance().getNextClassDistance(distanceTable));
-//		System.out.println(ClassManager.getInstance().getNextClass());
-//		System.out.println(ClassManager.getInstance().getNextTotalDistance(distanceTable));
 
-//		System.out.println(ClassManager.getInstance());
-//		System.out.println(StudentManager.getInstance());
+		/*
+		   int min = 100000;
+		   for(int i=0; i<10; i++)
+		   {
+		   ClassManager.getInstance().clear();
+		   ClassRoomManager.getInstance().clear();
+		   StudentManager.getInstance().clear();
 
+		   ClassSystem system = new ClassSystem(args[0]);
+		   system.selectSemester(2013, 1);
+
+		   ClassManager.getInstance().setNextClass();
+		   int pre = (ClassManager.getInstance().getNextTotalDistance());
+		   System.out.println("\n\n" + i + "th iteration");
+		   System.out.println(pre);
+
+		   RandomArrayAdaptor adaptor = new RandomArrayAdaptor();
+		   adaptor.set(ClassManager.getInstance().getAllClasses());
+
+		   ArrayList<ClassInfo> newArray = adaptor.get(100);	
+		   for(ClassInfo c : newArray)
+		   {
+		   c.makeEmpty();
+		   }
+		   System.out.println("selected");
+
+		   MutateClassAdaptor ad = new MutateClassAdaptor();
+		   ad.set(newArray);
+		   ad.get();
+
+		   System.out.println("sorted");
+
+
+
+		   ClassManager.getInstance().setNextClass();
+
+		   int next = (ClassManager.getInstance().getNextTotalDistance());
+		   System.out.println(next);
+		   if(min > next) min = next;
+
+		   System.out.println(ClassManager.getInstance().ClassPair());
+		   }
+
+		   System.out.println("\n\nmin : " + min);
+		 */	
 	}
 }

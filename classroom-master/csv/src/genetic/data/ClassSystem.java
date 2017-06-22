@@ -17,6 +17,8 @@ public class ClassSystem
 		_class  = new CSVReader(data, "class.csv").makeTable("CLASS");
 		classRoom = new CSVReader(data, "classroom.csv").makeTable("CLASSROOM");
 		distanceTable = (DistanceTable)(new CSVReader(data, "distance.csv").makeTable("DISTANCE"));
+
+		ClassManager.getInstance().setDistanceTable(distanceTable);
 	}
 
 	public void selectSemester(int year, int semester)

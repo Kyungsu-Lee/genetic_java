@@ -1,7 +1,9 @@
 package genetic.data;
 
 import java.util.HashMap;
+import java.util.Comparator;
 import java.util.ArrayList;
+import java.util.Collections;
 import genetic.csv.DistanceTable;
 
 public class ClassManager
@@ -9,6 +11,7 @@ public class ClassManager
 	HashMap<ClassKey, ClassInfo> map;
 
 	private static ClassManager instance;
+	DistanceTable table;
 
 	private ClassManager()
 	{
@@ -23,14 +26,25 @@ public class ClassManager
 		return instance;
 	}
 
+	public void setDistanceTable(DistanceTable table)
+	{
+		this.table = table;
+	}
+
 	public void insertClass(ClassInfo classInfo)
 	{
+		if(!classInfo.getClassRoomName().equals("."))
 		map.put(classInfo.getKey(), classInfo);
 	}
 
 	public ClassInfo get(ClassKey key)
 	{
 		return map.get(key);
+	}
+	
+	public void clear()
+	{
+		map.clear();
 	}
 
 	public ArrayList<ClassInfo> getAllClasses()
@@ -40,6 +54,19 @@ public class ClassManager
 		for(ClassKey key : map.keySet())
 			tmp.add(map.get(key));
 		
+		return tmp;
+	}
+
+
+	public ArrayList<ClassInfo> getAllClasses(Comparator comp)
+	{
+		ArrayList<ClassInfo> tmp = new ArrayList<>();
+
+		for(ClassKey key : map.keySet())
+			tmp.add(map.get(key));
+
+		Collections.sort(tmp, comp);
+
 		return tmp;
 	}
 
@@ -61,6 +88,12 @@ public class ClassManager
 
 	public void setNextClass()
 	{
+		for(ClassKey key : map.keySet())
+		{
+			map.get(key).clearNextClass();
+			map.get(key).clearPreviousClass();
+		}
+
 		for(ClassKey key : map.keySet())
 		{
 			for(ClassKey p : map.keySet())
@@ -95,6 +128,11 @@ public class ClassManager
 		return tmp;
 	}
 
+	public String getNextClassDistance()
+	{
+		return getNextClassDistance(this.table);
+	}
+
 	public int getNextTotalDistance(DistanceTable table)
 	{
 		int tmp = 0;
@@ -104,7 +142,41 @@ public class ClassManager
 		}
 		return tmp;
 	}
-	
+
+	public int getPreviousClassDistance(DistanceTable table)
+	{
+		int tmp = 0;
+
+		for(ClassKey key : map.keySet())
+			tmp += map.get(key).getPreviousDistance(table);
+		return tmp;
+	}
+
+	public int getPreviousClassDistance()
+	{
+		return getPreviousClassDistance(this.table);
+	}
+
+	public int getNextTotalDistance()
+	{
+		return getNextTotalDistance(table);
+	}
+
+	public String ClassPair()
+	{
+		ArrayList<String> arr = new ArrayList<>();
+		StringBuilder tmp = new StringBuilder();
+
+		for(ClassKey key : map.keySet())
+			arr.add(map.get(key).getClassCode() + "(" + map.get(key).getClassSection() + ")" + "=>" + map.get(key).getClassRoomName() + "\n");
+
+		Collections.sort(arr);
+
+		for(String str : arr)
+			tmp.append(str);
+
+		return tmp.toString();
+	}
 
 	@Override
 	public String toString()

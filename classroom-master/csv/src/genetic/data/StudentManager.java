@@ -21,6 +21,11 @@ public class StudentManager
 		return instance;
 	}
 
+	public void clear()
+	{
+		students.clear();
+	}
+
 	public void insertStudent(Student stuInfo)
 	{
 		students.add(stuInfo);
