@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Collections;
 import genetic.csv.DistanceTable;
+import genetic.gene.*;
 
 public class ClassManager
 {
@@ -45,6 +46,14 @@ public class ClassManager
 	public void clear()
 	{
 		map.clear();
+	}
+
+	public Gene makeGene()
+	{
+		Gene gene = new Gene();
+		for(ClassKey key : map.keySet())
+			gene.addClass(map.get(key).makeGene());
+		return gene;
 	}
 
 	public ArrayList<ClassInfo> getAllClasses()

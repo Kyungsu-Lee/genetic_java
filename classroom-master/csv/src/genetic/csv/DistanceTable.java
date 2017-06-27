@@ -2,9 +2,18 @@ package genetic.csv;
 
 public class DistanceTable extends Table
 {
-	public DistanceTable()
+	private static DistanceTable instance;
+
+	private DistanceTable()
 	{
 		
+	}
+
+	public static DistanceTable getInstance()
+	{
+		if(instance == null) instance = new DistanceTable();
+
+		return instance;
 	}
 
 	public Table selectRows(String attribute, String value)

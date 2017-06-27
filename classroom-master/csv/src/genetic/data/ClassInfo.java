@@ -2,6 +2,7 @@ package genetic.data;
 
 import genetic.csv.*;
 import java.util.*;
+import genetic.gene.*;
 
 public class ClassInfo
 {
@@ -37,6 +38,16 @@ public class ClassInfo
 	public void setTable(DistanceTable table)
 	{
 		this.table = table;
+	}
+
+	public ClassGene makeGene()
+	{
+		ClassGene gene = new ClassGene(getKey());
+		gene.setClassTime(this.class_time);
+		gene.set_tmp_class_room(this.classRoom.getName());
+		gene.setNum(max_num, taking_num);
+		for(Student stu : taking_students) gene.addStudent(stu);
+		return gene;
 	}
 
 	public String getYear() { return this.year; }

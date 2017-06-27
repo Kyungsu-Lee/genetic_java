@@ -4,14 +4,27 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Collections;
+import java.util.Random;
+import java.util.Arrays;
 
 import genetic.csv.*;
 import genetic.data.*;
 import genetic.mutation.*;
+import genetic.gene.*;
 
 public class Main
 {
 	static DistanceTable distanceTable;
+
+	private static class cmp implements Comparator<Gene>
+	{
+		public int compare(Gene g1, Gene g2)
+		{
+			Integer i1 = new Integer(g1.getTotalNextDistance());
+			return i1.compareTo(new Integer(g2.getTotalNextDistance()));
+		}
+	}
 
 	public static void main(String[] args)
 	{
@@ -19,14 +32,227 @@ public class Main
 		ClassSystem system = new ClassSystem(args[0]);
 		system.selectSemester(2013, 1);
 
-		distanceTable = (DistanceTable)(new CSVReader(args[0], "distance.csv").makeTable("DISTANCE"));
-		ClassManager.getInstance().setNextClass();
+		Gene gene = ClassManager.getInstance().makeGene();
 
-		ClassManager cM = ClassManager.getInstance();
-		for(ClassInfo _class : cM.getAllClasses())
-			_class.setTable(distanceTable);
+		Gene[] parent = new Gene[200];
 
-	
+		parent[0] = gene;
+
+		for(int i=1; i<parent.length/10; i++)
+		{
+			RandomArrayAdaptor rA = new RandomArrayAdaptor();
+			rA.setGene(parent[0]);
+			parent[i] = rA.mutate(100);
+			System.out.print("a");
+			if(i % 10 == 0)
+				System.out.println("");		
+		}
+
+		for(int i=parent.length/10; i<parent.length/2; i++)
+		{
+			RandomArrayAdaptor rA = new RandomArrayAdaptor();
+			rA.setGene(parent[0]);
+
+			if(i%4 == 0)
+				parent[i] = rA.mutate(10);
+			if(i%4 == 1)
+				parent[i] = rA.mutate(20);
+			if(i%4 == 2)
+				parent[i] = rA.mutate(30);
+			if(i%4 == 3)
+				parent[i] = rA.mutate(40);
+		
+			System.out.print("r");
+			if(i % 10 == 0)
+				System.out.println("");		
+		}
+
+		for(int i=parent.length/2; i<parent.length; i++)
+		{
+			GreedyAdaptor gA = new GreedyAdaptor();
+			gA.setGene(gene);
+			parent[i] = gA.mutate(10);
+			System.out.print("g");
+			if(i % 10 == 0)
+				System.out.println("");		
+		}
+
+		int t = 0;
+		for(Gene _gene : parent)
+		{
+			System.out.println((++t) + ":" + _gene.getTotalNextDistance());
+		}
+		System.out.println("===");
+
+
+		HashSet<Integer> rd_set = new HashSet<>();
+		HashSet<Integer> rd_greedy_set = new HashSet<>();
+		Random rd = new Random();
+
+		Gene[] first_generation = new Gene[100];
+		int index = 0;
+		while(rd_set.size() < 100)
+		{
+			int rd_num = rd.nextInt(parent.length/2);
+			if(rd_set.contains(rd_num)) continue;
+			rd_set.add(rd_num);
+			
+			int rd_greedy_num = rd.nextInt(parent.length/2) + parent.length/2;
+			while(rd_greedy_set.contains(rd_greedy_num)) 
+				rd_greedy_num = rd.nextInt(parent.length/2) + parent.length/2;
+			rd_greedy_set.add(rd_greedy_num);
+
+			MutationAdaptor mA = new MutationAdaptor();
+			if(index%4 == 0)
+			{
+				first_generation[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 10);
+				continue;
+			}
+			if(index%4 == 1)
+			{
+				first_generation[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 30);
+				continue;
+			}
+			if(index%4 == 2)
+			{
+				first_generation[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 50);
+				continue;
+			}
+			if(index%4 == 3)
+			{
+				first_generation[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 80);
+				continue;
+			}
+			System.out.print("c");
+			if(index % 10 == 0)
+				System.out.println("");		
+			if(index > 100) break;
+		}
+
+		Arrays.sort(first_generation, new cmp());
+		t = 0;
+		for(Gene _gene : first_generation)
+		{
+			System.out.println((++t) + ":" + _gene.getTotalNextDistance());
+		}
+		System.out.println("===");
+
+		Gene[] generation = new Gene[100];
+		for(int i=0; i<100; i++)
+			generation[i] = first_generation[i];
+		for(int count = 0; count < 5; count++)
+		{
+			System.out.println("generation : " + (count + 1));
+			rd_set.clear();
+
+			Gene[] tmp = new Gene[100];
+			for(int i=0; i<75; i++)
+			{
+				tmp[i] = generation[i];
+				rd_set.add(i);
+			}
+
+			for(int i=75; i<85; i++)
+			{
+				RandomArrayAdaptor rA = new RandomArrayAdaptor();
+				rA.setGene(gene);
+				tmp[i] = rA.mutate(100);
+
+				System.out.print("r");
+				if(i % 10 == 0)
+					System.out.println("");		
+			}
+			int tmp_i = 85;
+			while(rd_set.size() < 15)
+			{
+				int rd_num = rd.nextInt(100);
+				if(rd_set.contains(rd_num)) continue;
+				rd_set.add(rd_num);	
+				
+				tmp[tmp_i++] = generation[rd_num];
+
+				System.out.print(".");
+				if(tmp_i % 10 == 0)
+					System.out.println("");		
+			}
+
+			Gene[] tmp2 = new Gene[100];
+			for(int i=0; i<100; i++)
+			{
+				GreedyAdaptor gA = new GreedyAdaptor();
+				gA.setGene(gene);
+				tmp2[i] = gA.mutate(10);
+
+				System.out.print("g");
+				if(i % 10 == 0)
+					System.out.println("");		
+			} 
+
+			Gene[] tmp_gene = new Gene[100];
+
+			rd_set.clear();
+			rd_greedy_set.clear();
+			index = 0;
+			while(rd_set.size() < 100)
+			{
+				int rd_num = rd.nextInt(100);
+				if(rd_set.contains(rd_num)) continue;
+				rd_set.add(rd_num);
+
+				int rd_greedy_num = rd.nextInt(100);
+				while(rd_greedy_set.contains(rd_greedy_num)) 
+					rd_greedy_num = rd.nextInt(100);
+				rd_greedy_set.add(rd_greedy_num);
+
+				MutationAdaptor mA = new MutationAdaptor();
+				if(index%4 == 0)
+				{
+					tmp_gene[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 10);
+					continue;
+				}
+				if(index%4 == 1)
+				{
+					tmp_gene[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 30);
+					continue;
+				}
+				if(index%4 == 2)
+				{
+					tmp_gene[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 50);
+					continue;
+				}
+				if(index%4 == 3)
+				{
+					tmp_gene[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 80);
+					continue;
+				}
+				System.out.print("c");
+				if(index % 10 == 0)
+					System.out.println("");		
+				if(index > 100) break;
+			}
+
+			for(int i=0; i<100; i++)
+				generation[i] = tmp_gene[i];
+
+
+			Arrays.sort(generation, new cmp());
+			t = 0;
+			for(Gene _gene : generation)
+			{
+				System.out.println((++t) + ":" + _gene.getTotalNextDistance());
+			}
+			System.out.println("===");
+		}
+
+		/*
+		   distanceTable = (DistanceTable)(new CSVReader(args[0], "distance.csv").makeTable("DISTANCE"));
+		   ClassManager.getInstance().setNextClass();
+
+		   ClassManager cM = ClassManager.getInstance();
+		   for(ClassInfo _class : cM.getAllClasses())
+		   _class.setTable(distanceTable);
+
+
 		System.out.println(cM.getNextTotalDistance());
 
 		GreedyAdaptor gA = new GreedyAdaptor();
@@ -46,7 +272,7 @@ public class Main
 
 		next = (ClassManager.getInstance().getNextTotalDistance());
 		System.out.println(next);
-/*
+
 		ClassSystem system = new ClassSystem(args[0]);
 		system.selectSemester(2013, 1);
 

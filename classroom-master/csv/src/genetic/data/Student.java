@@ -22,11 +22,25 @@ public class Student
 		this.class_section = class_section;
 	}
 
+	public Student(Student other)
+	{
+		this.id = other.getId();
+		this.semester = other.getSemester();
+		this.year = other.getYear();
+		this.class_code = other.getClassCode();
+		this.class_section = other.getClassSection();
+	}
+
 	public String getId()
 	{
 		return this.id;
 	}
 
+	public String getYear() { return this.year; }
+	public String getSemester() { return this.semester; }
+	public String getClassCode() { return this.class_code; }
+	public String getClassSection() { return this.class_section; }
+	
 	public ClassKey getClassKey()
 	{
 		return new ClassKey(year, semester, class_code, class_section);

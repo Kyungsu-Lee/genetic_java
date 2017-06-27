@@ -19,7 +19,7 @@ public class TableFactory
 			return new ClassTable();	
 
 		if(token.equals(TOKENS[2]))
-			return new DistanceTable();
+			return DistanceTable.getInstance();
 	
 		if(token.equals(TOKENS[3]))
 			return new ClassRoomTable();

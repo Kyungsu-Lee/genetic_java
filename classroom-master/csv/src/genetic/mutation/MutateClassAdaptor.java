@@ -6,10 +6,13 @@ import java.util.Random;
 
 import genetic.data.*;
 import genetic.csv.*;
+import genetic.gene.*;
 
 public class MutateClassAdaptor
 {
 	private ArrayList<ClassInfo> array;
+	private ArrayList<ClassGene> classes;
+	private ArrayList<ClassRoomGene> classRooms;
 	
 	public void set(ArrayList<ClassInfo> array)
 	{
@@ -44,6 +47,13 @@ public class MutateClassAdaptor
 
 		return array;
 	}
+
+	public void setGene(Gene gene)
+	{
+		classRooms = gene.getClassRoomGene();
+		classes = gene.getClassGene();
+	}
+
 
 	private boolean condition(ClassInfo classInfo, ClassRoom classRoom)
 	{
