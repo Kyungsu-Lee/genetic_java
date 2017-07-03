@@ -88,7 +88,7 @@ public class Main
 		HashSet<Integer> rd_set = new HashSet<>();
 		HashSet<Integer> rd_greedy_set = new HashSet<>();
 		Random rd = new Random();
-
+/*
 		Gene[] first_generation = new Gene[100];
 		int index = 0;
 		while(rd_set.size() < 100)
@@ -130,29 +130,31 @@ public class Main
 		}
 
 		Arrays.sort(first_generation, new cmp());
-		t = 0;
-		for(Gene _gene : first_generation)
+*/		t = 0;
+		for(Gene _gene : parent)
 		{
 			System.out.println((++t) + ":" + _gene.getTotalNextDistance());
 		}
 		System.out.println("===");
 
-		Gene[] generation = new Gene[100];
-		for(int i=0; i<100; i++)
-			generation[i] = first_generation[i];
-		for(int count = 0; count < 5; count++)
+		Gene[] generation = new Gene[200];
+		for(int i=0; i<200; i++)
+			generation[i] = parent[i];
+		for(int count = 0; count < 10; count++)	//new generation
 		{
 			System.out.println("generation : " + (count + 1));
 			rd_set.clear();
+			
+			Arrays.sort(generation , new cmp());
 
-			Gene[] tmp = new Gene[100];
-			for(int i=0; i<75; i++)
+			Gene[] tmp = new Gene[200];
+			for(int i=0; i<100; i++)
 			{
 				tmp[i] = generation[i];
 				rd_set.add(i);
 			}
 
-			for(int i=75; i<85; i++)
+			for(int i=100; i<20; i++)
 			{
 				RandomArrayAdaptor rA = new RandomArrayAdaptor();
 				rA.setGene(gene);
@@ -162,8 +164,8 @@ public class Main
 				if(i % 10 == 0)
 					System.out.println("");		
 			}
-			int tmp_i = 85;
-			while(rd_set.size() < 15)
+			int tmp_i = 130;
+			while(rd_set.size() < 30)
 			{
 				int rd_num = rd.nextInt(100);
 				if(rd_set.contains(rd_num)) continue;
@@ -176,63 +178,21 @@ public class Main
 					System.out.println("");		
 			}
 
-			Gene[] tmp2 = new Gene[100];
-			for(int i=0; i<100; i++)
-			{
+			for(int i=150; i<200; i++)
+			{	
+				RandomArrayAdaptor rA = new RandomArrayAdaptor();
+				rA.setGene(gene);
 				GreedyAdaptor gA = new GreedyAdaptor();
-				gA.setGene(gene);
-				tmp2[i] = gA.mutate(10);
+				gA.setGene(rA.mutate(100));
+				tmp[i] = gA.mutate(20);
 
 				System.out.print("g");
 				if(i % 10 == 0)
 					System.out.println("");		
 			} 
 
-			Gene[] tmp_gene = new Gene[100];
-
-			rd_set.clear();
-			rd_greedy_set.clear();
-			index = 0;
-			while(rd_set.size() < 100)
-			{
-				int rd_num = rd.nextInt(100);
-				if(rd_set.contains(rd_num)) continue;
-				rd_set.add(rd_num);
-
-				int rd_greedy_num = rd.nextInt(100);
-				while(rd_greedy_set.contains(rd_greedy_num)) 
-					rd_greedy_num = rd.nextInt(100);
-				rd_greedy_set.add(rd_greedy_num);
-
-				MutationAdaptor mA = new MutationAdaptor();
-				if(index%4 == 0)
-				{
-					tmp_gene[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 10);
-					continue;
-				}
-				if(index%4 == 1)
-				{
-					tmp_gene[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 30);
-					continue;
-				}
-				if(index%4 == 2)
-				{
-					tmp_gene[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 50);
-					continue;
-				}
-				if(index%4 == 3)
-				{
-					tmp_gene[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 80);
-					continue;
-				}
-				System.out.print("c");
-				if(index % 10 == 0)
-					System.out.println("");		
-				if(index > 100) break;
-			}
-
 			for(int i=0; i<100; i++)
-				generation[i] = tmp_gene[i];
+				generation[i] = tmp[i];
 
 
 			Arrays.sort(generation, new cmp());
