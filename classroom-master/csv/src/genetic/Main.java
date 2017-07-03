@@ -28,180 +28,21 @@ public class Main
 
 	public static void main(String[] args)
 	{
-
 		ClassSystem system = new ClassSystem(args[0]);
 		system.selectSemester(2013, 1);
 
+		for(int k=0; k<20; k++)
+		{
 		Gene gene = ClassManager.getInstance().makeGene();
 
-		Gene[] parent = new Gene[200];
-
-		parent[0] = gene;
-
-		for(int i=1; i<parent.length/10; i++)
+		for(int i=1; i < 100; i++)
 		{
-			RandomArrayAdaptor rA = new RandomArrayAdaptor();
-			rA.setGene(parent[0]);
-			parent[i] = rA.mutate(100);
-			System.out.print("a");
-			if(i % 10 == 0)
-				System.out.println("");		
+			GreedyAdaptor rA = new GreedyAdaptor();
+			rA.setGene(gene);
+			gene= rA.mutate(100);
+			System.out.println(i + "," + gene.getTotalNextDistance()+ ",");
 		}
-
-		for(int i=parent.length/10; i<parent.length/2; i++)
-		{
-			RandomArrayAdaptor rA = new RandomArrayAdaptor();
-			rA.setGene(parent[0]);
-
-			if(i%4 == 0)
-				parent[i] = rA.mutate(10);
-			if(i%4 == 1)
-				parent[i] = rA.mutate(20);
-			if(i%4 == 2)
-				parent[i] = rA.mutate(30);
-			if(i%4 == 3)
-				parent[i] = rA.mutate(40);
-		
-			System.out.print("r");
-			if(i % 10 == 0)
-				System.out.println("");		
-		}
-
-		for(int i=parent.length/2; i<parent.length; i++)
-		{
-			GreedyAdaptor gA = new GreedyAdaptor();
-			gA.setGene(gene);
-			parent[i] = gA.mutate(10);
-			System.out.print("g");
-			if(i % 10 == 0)
-				System.out.println("");		
-		}
-
-		int t = 0;
-		for(Gene _gene : parent)
-		{
-			System.out.println((++t) + ":" + _gene.getTotalNextDistance());
-		}
-		System.out.println("===");
-
-
-		HashSet<Integer> rd_set = new HashSet<>();
-		HashSet<Integer> rd_greedy_set = new HashSet<>();
-		Random rd = new Random();
-/*
-		Gene[] first_generation = new Gene[100];
-		int index = 0;
-		while(rd_set.size() < 100)
-		{
-			int rd_num = rd.nextInt(parent.length/2);
-			if(rd_set.contains(rd_num)) continue;
-			rd_set.add(rd_num);
-			
-			int rd_greedy_num = rd.nextInt(parent.length/2) + parent.length/2;
-			while(rd_greedy_set.contains(rd_greedy_num)) 
-				rd_greedy_num = rd.nextInt(parent.length/2) + parent.length/2;
-			rd_greedy_set.add(rd_greedy_num);
-
-			MutationAdaptor mA = new MutationAdaptor();
-			if(index%4 == 0)
-			{
-				first_generation[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 10);
-				continue;
-			}
-			if(index%4 == 1)
-			{
-				first_generation[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 30);
-				continue;
-			}
-			if(index%4 == 2)
-			{
-				first_generation[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 50);
-				continue;
-			}
-			if(index%4 == 3)
-			{
-				first_generation[index++] = mA.mutate(parent[rd_num], parent[rd_greedy_num], 80);
-				continue;
-			}
-			System.out.print("c");
-			if(index % 10 == 0)
-				System.out.println("");		
-			if(index > 100) break;
-		}
-
-		Arrays.sort(first_generation, new cmp());
-*/		t = 0;
-		for(Gene _gene : parent)
-		{
-			System.out.println((++t) + ":" + _gene.getTotalNextDistance());
-		}
-		System.out.println("===");
-
-		Gene[] generation = new Gene[200];
-		for(int i=0; i<200; i++)
-			generation[i] = parent[i];
-		for(int count = 0; count < 10; count++)	//new generation
-		{
-			System.out.println("generation : " + (count + 1));
-			rd_set.clear();
-			
-			Arrays.sort(generation , new cmp());
-
-			Gene[] tmp = new Gene[200];
-			for(int i=0; i<100; i++)
-			{
-				tmp[i] = generation[i];
-				rd_set.add(i);
-			}
-
-			for(int i=100; i<20; i++)
-			{
-				RandomArrayAdaptor rA = new RandomArrayAdaptor();
-				rA.setGene(gene);
-				tmp[i] = rA.mutate(100);
-
-				System.out.print("r");
-				if(i % 10 == 0)
-					System.out.println("");		
-			}
-			int tmp_i = 130;
-			while(rd_set.size() < 30)
-			{
-				int rd_num = rd.nextInt(100);
-				if(rd_set.contains(rd_num)) continue;
-				rd_set.add(rd_num);	
-				
-				tmp[tmp_i++] = generation[rd_num];
-
-				System.out.print(".");
-				if(tmp_i % 10 == 0)
-					System.out.println("");		
-			}
-
-			for(int i=150; i<200; i++)
-			{	
-				RandomArrayAdaptor rA = new RandomArrayAdaptor();
-				rA.setGene(gene);
-				GreedyAdaptor gA = new GreedyAdaptor();
-				gA.setGene(rA.mutate(100));
-				tmp[i] = gA.mutate(20);
-
-				System.out.print("g");
-				if(i % 10 == 0)
-					System.out.println("");		
-			} 
-
-			for(int i=0; i<100; i++)
-				generation[i] = tmp[i];
-
-
-			Arrays.sort(generation, new cmp());
-			t = 0;
-			for(Gene _gene : generation)
-			{
-				System.out.println((++t) + ":" + _gene.getTotalNextDistance());
-			}
-			System.out.println("===");
+		System.out.println("====");
 		}
 
 		/*
