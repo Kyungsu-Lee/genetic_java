@@ -43,6 +43,6 @@ public class Main
 			System.out.println("====");
 
 		for(ClassGene _class : gene.getClassGene())
-			System.out.println(_class + " : " + _class.getClassRoom().getName());
+			System.out.println(_class + "\t" + _class.getClassRoom().getName());
 	}
 }
