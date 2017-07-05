@@ -33,10 +33,10 @@ public class ClassKey
 		String tmp = "";
 		tmp += "{";
 		tmp += "year : " + year;
-		tmp += ", semester : " + semester;
-		tmp += ", class_code : " + class_code;
-		tmp += ", class_section : " + class_section;
-		tmp += "}";
+		tmp += "\t semester : " + semester;
+		tmp += "\t class_code : " + class_code;
+		tmp += "\t class_section : " + class_section;
+		tmp += "";
 		return tmp;
 	}
 

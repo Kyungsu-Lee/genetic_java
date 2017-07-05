@@ -168,7 +168,17 @@ public class ClassGene
 
 	public String toString()
 	{
-		return this.classKey.toString();
+		return this.classKey.toString() + "\t time : " + getTimeString();
+	}
+
+	public String getTimeString()
+	{
+		StringBuilder tmp = new StringBuilder();
+
+		for(int time : class_time)
+			tmp.append(time + "/");
+		
+		return tmp.toString();
 	}
 
 	@Override
